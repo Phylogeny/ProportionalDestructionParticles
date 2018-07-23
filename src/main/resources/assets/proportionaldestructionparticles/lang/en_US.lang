@@ -1,0 +1,13 @@
+pdp.logger.info.replacement=Replacing Minecraft#effectRenderer - Block destruction particles now only spawn in blocks' collision/bounding boxes.
+
+pdp.config.title=Proportional Destruction Particles GUI Config
+pdp.config.client=Client
+pdp.config.client.tooltip=Client-only configs.
+pdp.config.client.enabled=Enabled
+pdp.config.client.enabled.tooltip=If true, block destruction particles will spawn normally (throughout the block space), otherwise they will only spawn in blocks' collision/bounding boxes.
+pdp.config.client.collision=Collision Boxes
+pdp.config.client.collision.tooltip=If true, block destruction particles only spawn in the collision boxes of blocks that have them, otherwise they will only spawn in their bounding boxes.
+pdp.config.client.growth=Box Growth
+pdp.config.client.growth.tooltip=The boxes that block destruction particles are allowed to spawn in is expanded by this many meters.
+pdp.config.client.random=Random
+pdp.config.client.random.tooltip=If true, block destruction particles spawn randomly within blocks' collision/bounding boxes, otherwise they will spawn at evenly spaced, pre-determined positions that fall withing expanded versions of those boxes.

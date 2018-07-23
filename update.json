@@ -1,0 +1,10 @@
+{
+  "homepage": "https://minecraft.curseforge.com/projects/proportional-destruction-particles",
+  "1.12.2": {
+    "1.12.2-1.0.0": "Changelog: "
+  },
+  "promos": {
+    "1.12.2-latest": "1.12.2-1.0.0",
+    "1.12.2-recommended": "1.12.2-1.0.0"
+  }
+}
