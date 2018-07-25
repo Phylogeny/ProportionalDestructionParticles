@@ -2,7 +2,7 @@
 {
   "modid": "pdp",
   "name": "Proportional Destruction Particles",
-  "description": "A client-only mod that causes block destruction particles to only spawn in blocks' collision/bounding boxes.",
+  "description": "A client-side mod that causes block destruction particles to only spawn in blocks' collision/bounding boxes.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "http://minecraft.curseforge.com/projects/proportional-destruction-particles",
