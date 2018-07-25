@@ -55,12 +55,16 @@ public class ProportionalDestructionParticles
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		logger = event.getModLog();
+		if (event.getSide() == Side.CLIENT)
+			logger = event.getModLog();
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
+		if (event.getSide() != Side.CLIENT)
+			return;
+		
 		String info = I18n.format(INFO_LANG_KEY);
 		logger.info(info.equals(INFO_LANG_KEY) ? "Replacing Minecraft#effectRenderer - Block destruction particles now only spawn in blocks' collision/bounding boxes." : info);
 		Minecraft.getMinecraft().effectRenderer = new ParticleManager(Minecraft.getMinecraft().world, Minecraft.getMinecraft().renderEngine)
