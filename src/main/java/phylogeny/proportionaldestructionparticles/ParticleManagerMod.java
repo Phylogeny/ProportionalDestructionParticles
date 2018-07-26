@@ -15,10 +15,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ParticleManagerMod extends ParticleManager
+public class ParticleManagerMod extends ParticleManager implements IProportionalDestructionParticleManager
 {
 
-	protected static Random random = new Random();
+	private static Random random = new Random();
 
 	public ParticleManagerMod(World world, TextureManager renderer)
 	{
@@ -28,15 +28,20 @@ public class ParticleManagerMod extends ParticleManager
 	@Override
 	public void addBlockDestroyEffects(BlockPos pos, IBlockState state)
 	{
+		if (addBlockDestroyEffects(pos, state, world, this, 4))
+			super.addBlockDestroyEffects(pos, state);
+	}
+
+	public static boolean addBlockDestroyEffects(BlockPos pos, IBlockState state, World world, IProportionalDestructionParticleManager particleManager, double particlesPerAxis)
+	{
 		// Spawn block destruction particles normally if mod functionality is disabled
 		if (!ConfigMod.CLIENT.enabled)
 		{
-			super.addBlockDestroyEffects(pos, state);
-			return;
+			return true;
 		}
 
 		// Attempt to spawn particles if block is not air and if not canceled by the block
-		if (!state.getBlock().isAir(state, world, pos) && !state.getBlock().addDestroyEffects(world, pos, this))
+		if (!state.getBlock().isAir(state, world, pos) && !state.getBlock().addDestroyEffects(world, pos, (ParticleManager) particleManager))
 		{
 			state = state.getActualState(world, pos);
 			List<AxisAlignedBB> masks = Lists.newArrayList();
@@ -59,8 +64,7 @@ public class ParticleManagerMod extends ParticleManager
 				// Spawn particles normally if bounding box is null, or if collision boxes are being ignored and it is a full block
 				if ((!ConfigMod.CLIENT.collisionBoxes && Block.FULL_BLOCK_AABB.offset(pos).equals(bounds)) || bounds == null)
 				{
-					super.addBlockDestroyEffects(pos, state);
-					return;
+					return true;
 				}
 				masks.add(bounds.offset(pos));
 			}
@@ -70,6 +74,7 @@ public class ParticleManagerMod extends ParticleManager
 			{
 				double volumeTotal = 1;
 				double d0, d1, d2, dx, dy, dz, count;
+				double particlesCountTotal = particlesPerAxis * particlesPerAxis * particlesPerAxis;
 				for (AxisAlignedBB mask : masks)
 				{
 					// Grow box to allow increased number of particles, and revert offset in preparation for spawn area limiting
@@ -79,7 +84,7 @@ public class ParticleManagerMod extends ParticleManager
 					d0 = mask.maxX - mask.minX;
 					d1 = mask.maxY - mask.minY;
 					d2 = mask.maxZ - mask.minZ;
-					count = Math.round(d0 * d1 * d2 / volumeTotal * 64.0);
+					count = Math.round(d0 * d1 * d2 / volumeTotal * particlesCountTotal);
 
 					// Restore spawn area, now that the particles count is obtained
 					mask = mask.shrink(ConfigMod.CLIENT.boxGrowth);
@@ -99,23 +104,23 @@ public class ParticleManagerMod extends ParticleManager
 						d0 = mask.minX + dx * random.nextDouble();
 						d1 = mask.minY + dy * random.nextDouble();
 						d2 = mask.minZ + dz * random.nextDouble();
-						addEffect((new ParticleDiggingExtened(world, d0 + pos.getX(), d1 + pos.getY(), d2 + pos.getZ(), d0 - 0.5, d1 - 0.5, d2 - 0.5, state)).setBlockPos(pos));
+						particleManager.addDestructionParticle(pos, state, world, d0 + pos.getX(), d1 + pos.getY(), d2 + pos.getZ(), d0 - 0.5, d1 - 0.5, d2 - 0.5);
 					}
 				}
-				return;
+				return false;
 			}
 
 			// Attempt to spawn up to 64 particles within the block space
 			double d0, d1, d2, x, y, z;
-			for (int j = 0; j < 4; ++j)
+			for (int j = 0; j < particlesPerAxis; ++j)
 			{
-				for (int k = 0; k < 4; ++k)
+				for (int k = 0; k < particlesPerAxis; ++k)
 				{
-					for (int l = 0; l < 4; ++l)
+					for (int l = 0; l < particlesPerAxis; ++l)
 					{
-						d0 = (j + 0.5D) / 4.0D;
-						d1 = (k + 0.5D) / 4.0D;
-						d2 = (l + 0.5D) / 4.0D;
+						d0 = (j + 0.5D) / particlesPerAxis;
+						d1 = (k + 0.5D) / particlesPerAxis;
+						d2 = (l + 0.5D) / particlesPerAxis;
 						x = d0 + pos.getX();
 						y = d1 + pos.getY();
 						z = d2 + pos.getZ();
@@ -125,7 +130,7 @@ public class ParticleManagerMod extends ParticleManager
 							// Only spawn particle if it is inside an expanded (to increase the number of particles) version of one of the masks
 							if (maskContainsVector(x, y, z, mask.grow(ConfigMod.CLIENT.boxGrowth)))
 							{
-								addEffect((new ParticleDiggingExtened(world, x, y, z, d0 - 0.5, d1 - 0.5, d2 - 0.5, state)).setBlockPos(pos));
+								particleManager.addDestructionParticle(pos, state, world, x, y, z, d0 - 0.5, d1 - 0.5, d2 - 0.5);
 								break;
 							}
 						}
@@ -133,12 +138,13 @@ public class ParticleManagerMod extends ParticleManager
 				}
 			}
 		}
+		return false;
 	}
 
 	/**
 	 * Modified version of {@link net.minecraft.util.math.AxisAlignedBB#contains contains} in AxisAlignedBB
 	 */
-	private boolean maskContainsVector(double x, double y, double z, AxisAlignedBB mask)
+	private static boolean maskContainsVector(double x, double y, double z, AxisAlignedBB mask)
 	{
 		if (x > mask.minX && x < mask.maxX)
 		{
@@ -150,13 +156,20 @@ public class ParticleManagerMod extends ParticleManager
 		return false;
 	}
 
+	@Override
+	public void addDestructionParticle(BlockPos pos, IBlockState state, World world,
+			double x, double y, double z, double xMotion, double yMotion, double zMotion)
+	{
+		addEffect((new ParticleDiggingMod(world, x, y, z, xMotion, yMotion, zMotion, state)).setBlockPos(pos));
+	}
+
 	/**
 	 * Extended version of {@link net.minecraft.client.particle.ParticleDigging ParticleDigging} that gives access to the needed protected constructor
 	 */
-	private class ParticleDiggingExtened extends ParticleDigging
+	private static class ParticleDiggingMod extends ParticleDigging
 	{
 
-		protected ParticleDiggingExtened(World world, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, IBlockState state)
+		protected ParticleDiggingMod(World world, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, IBlockState state)
 		{
 			super(world, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, state);
 		}
