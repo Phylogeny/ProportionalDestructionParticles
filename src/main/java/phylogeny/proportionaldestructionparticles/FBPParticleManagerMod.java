@@ -60,7 +60,7 @@ public class FBPParticleManagerMod extends FBPParticleManager implements IPropor
 		Block block = state.getBlock();
 		if ((!(block instanceof BlockLiquid) && !(FBP.frozen && !FBP.spawnWhileFrozen))
 				&& (FBP.spawnRedstoneBlockParticles || block != Blocks.REDSTONE_BLOCK)
-				&& !FBP.INSTANCE.isInExceptions(block, true) && block != FBP.FBPBlock)
+				&& !FBP.INSTANCE.isBlacklisted(block, true) && block != FBP.FBPBlock)
 		{
 			if (!FBP.enabled || ParticleManagerMod.addBlockDestroyEffects(pos, state, world, this, FBP.particlesPerAxis))
 				super.addBlockDestroyEffects(pos, state);
