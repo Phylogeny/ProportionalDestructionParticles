@@ -62,7 +62,7 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 				AxisAlignedBB bounds = state.getBoundingBox(world, pos);
 
 				// Spawn particles normally if bounding box is null, or if collision boxes are being ignored and it is a full block
-				if ((!ConfigMod.CLIENT.collisionBoxes && Block.FULL_BLOCK_AABB.offset(pos).equals(bounds)) || bounds == null)
+				if ((!ConfigMod.CLIENT.collisionBoxes && Block.FULL_BLOCK_AABB.equals(bounds)) || bounds == null)
 				{
 					return true;
 				}
