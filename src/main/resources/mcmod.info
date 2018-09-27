@@ -9,6 +9,6 @@
   "updateJSON": "${updatejson}",
   "authorList": ["Phylogeny"],
   "logoFile": "assets/proportionaldestructionparticles/logo/logo.png",
-  "dependants": [cofhcore]
+  "dependants": [cofhcore, fbp, chiselsandbits]
 }
 ]

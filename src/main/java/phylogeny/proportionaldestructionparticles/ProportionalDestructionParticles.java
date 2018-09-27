@@ -24,7 +24,7 @@ public class ProportionalDestructionParticles
 	public static final String VERSION = "@VERSION@";
 	public static final String UPDATE_JSON = "@UPDATE@";
 	public static final String MC_VERSIONS_ACCEPTED = "[1.12.2,)";
-	public static final String DEPENDENCIES = "before:cofhcore;after:fbp";
+	public static final String DEPENDENCIES = "before:cofhcore;after:fbp;after:chiselsandbits";
 	public static final boolean CLIENT_OLNY = true;
 	private static final String INFO_LANG_KEY = "logger." + MOD_ID + ".info.replacement";
 	private static Logger logger;
@@ -44,7 +44,7 @@ public class ProportionalDestructionParticles
 
 		if (Loader.isModLoaded("fbp"))
 			FBPParticleManagerMod.init();
-		
+
 		String info = I18n.format(INFO_LANG_KEY);
 		logger.info(info.equals(INFO_LANG_KEY) ? "Replacing Minecraft#effectRenderer - Block destruction particles now only spawn in blocks' collision/bounding boxes." : info);
 		Minecraft.getMinecraft().effectRenderer = new ParticleManagerMod(Minecraft.getMinecraft().world, Minecraft.getMinecraft().renderEngine);

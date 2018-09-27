@@ -1,7 +1,6 @@
 package phylogeny.proportionaldestructionparticles;
 
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.collect.Lists;
 
@@ -14,11 +13,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import phylogeny.proportionaldestructionparticles.api.ChiselsAndBitsAPIProxy;
 
 public class ParticleManagerMod extends ParticleManager implements IProportionalDestructionParticleManager
 {
-
-	private static Random random = new Random();
 
 	public ParticleManagerMod(World world, TextureManager renderer)
 	{
@@ -40,10 +38,25 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 			return true;
 		}
 
-		// Attempt to spawn particles if block is not air and if not canceled by the block
-		if (!state.getBlock().isAir(state, world, pos) && !state.getBlock().addDestroyEffects(world, pos, (ParticleManager) particleManager))
+		IBlockState stateParticle = null;
+		if (ChiselsAndBitsAPIProxy.isBlockChiseled(world, pos))
 		{
-			state = state.getActualState(world, pos);
+			if (!ConfigMod.CLIENT.particlesPerBit)
+				stateParticle = ChiselsAndBitsAPIProxy.getPrimaryState(world, pos, state);
+		}
+		else
+		{
+			if (state.getBlock().addDestroyEffects(world, pos, (ParticleManager) particleManager))
+			{
+				return false;
+			}
+			stateParticle = state;
+		}
+		state = state.getActualState(world, pos);
+
+		// Attempt to spawn particles if block is not air and if not canceled by the block
+		if (!state.getBlock().isAir(state, world, pos))
+		{
 			List<AxisAlignedBB> masks = Lists.newArrayList();
 
 			// Attempt to use collision boxes as masks, doing so is if not disabled
@@ -69,6 +82,10 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 				masks.add(bounds.offset(pos));
 			}
 
+			if (stateParticle == null)
+			{
+				return !ChiselsAndBitsAPIProxy.spawnDestructionParticlesPerBit(world, pos, particleManager, particlesPerAxis, masks);
+			}
 			// Attempt to randomly spawn a number of particles in each mask proportional to its size
 			if (ConfigMod.CLIENT.random)
 			{
@@ -101,10 +118,10 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 					// Spawn particles at random positions in the mask
 					for (int i = 0; i < count; i++)
 					{
-						d0 = mask.minX + dx * random.nextDouble();
-						d1 = mask.minY + dy * random.nextDouble();
-						d2 = mask.minZ + dz * random.nextDouble();
-						particleManager.addDestructionParticle(pos, state, world, d0 + pos.getX(), d1 + pos.getY(), d2 + pos.getZ(), d0 - 0.5, d1 - 0.5, d2 - 0.5);
+						d0 = mask.minX + dx * world.rand.nextDouble();
+						d1 = mask.minY + dy * world.rand.nextDouble();
+						d2 = mask.minZ + dz * world.rand.nextDouble();
+						particleManager.addDestructionParticle(pos, stateParticle, world, d0 + pos.getX(), d1 + pos.getY(), d2 + pos.getZ(), d0 - 0.5, d1 - 0.5, d2 - 0.5);
 					}
 				}
 				return false;
@@ -130,7 +147,7 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 							// Only spawn particle if it is inside an expanded (to increase the number of particles) version of one of the masks
 							if (maskContainsVector(x, y, z, mask.grow(ConfigMod.CLIENT.boxGrowth)))
 							{
-								particleManager.addDestructionParticle(pos, state, world, x, y, z, d0 - 0.5, d1 - 0.5, d2 - 0.5);
+								particleManager.addDestructionParticle(pos, stateParticle, world, x, y, z, d0 - 0.5, d1 - 0.5, d2 - 0.5);
 								break;
 							}
 						}
@@ -144,7 +161,7 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 	/**
 	 * Modified version of {@link net.minecraft.util.math.AxisAlignedBB#contains contains} in AxisAlignedBB
 	 */
-	private static boolean maskContainsVector(double x, double y, double z, AxisAlignedBB mask)
+	public static boolean maskContainsVector(double x, double y, double z, AxisAlignedBB mask)
 	{
 		if (x > mask.minX && x < mask.maxX)
 		{

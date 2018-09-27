@@ -27,8 +27,15 @@ minecraft {
     replace "@UPDATE@", update_json
 }
 
+repositories {
+    maven {
+        url  "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
+    deobfCompile "mod.chiselsandbits:chiselsandbits:${chisels_and_bits_version}:api"
 }
 
 processResources {

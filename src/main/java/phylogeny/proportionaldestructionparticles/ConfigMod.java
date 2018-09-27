@@ -48,6 +48,12 @@ public class ConfigMod
 				+ "pre-determined positions that fall withing expanded versions of those boxes.")
 		@LangKey(PREFIX + ".random")
 		public boolean random = false;
+
+		@Name("Spawn Particles Per-Bit")
+		@Comment("If true, and if Chisels & Bits is installed, each particle spawned for a chiseled block will correspond to the bit type at that particle's location."
+				+ "Otherwise, every particle spawned will correspond to the most common but type in the block space.")
+		@LangKey(PREFIX + ".c&b.per_bit")
+		public boolean particlesPerBit = true;
 	}
 
 	@SubscribeEvent
