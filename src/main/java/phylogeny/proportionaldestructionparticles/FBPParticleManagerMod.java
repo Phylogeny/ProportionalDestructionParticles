@@ -73,7 +73,7 @@ public class FBPParticleManagerMod extends FBPParticleManager implements IPropor
 	{
 		try
 		{
-			addEffect(new FBPParticleDiggingMod(world, x, y, z, xMotion, -0.001, zMotion, state));
+			addEffect(new FBPParticleDiggingMod(world, x, y, z, xMotion, -0.001, zMotion, state).setBlockPos(pos));
 		}
 		catch (Throwable e) {}
 	}
