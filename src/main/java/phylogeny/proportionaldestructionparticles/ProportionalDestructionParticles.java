@@ -24,7 +24,7 @@ public class ProportionalDestructionParticles
 	public static final String VERSION = "@VERSION@";
 	public static final String UPDATE_JSON = "@UPDATE@";
 	public static final String MC_VERSIONS_ACCEPTED = "[1.12.2,)";
-	public static final String DEPENDENCIES = "before:cofhcore;after:fbp;after:chiselsandbits";
+	public static final String DEPENDENCIES = "before:cofhcore;after:fbp@[2.4.1,);after:chiselsandbits";
 	public static final boolean CLIENT_OLNY = true;
 	private static final String INFO_LANG_KEY = "logger." + MOD_ID + ".info.replacement";
 	private static Logger logger;

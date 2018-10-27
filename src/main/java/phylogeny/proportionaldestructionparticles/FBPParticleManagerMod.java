@@ -60,7 +60,7 @@ public class FBPParticleManagerMod extends FBPParticleManager implements IPropor
 		Block block = state.getBlock();
 		if ((!(block instanceof BlockLiquid) && !(FBP.frozen && !FBP.spawnWhileFrozen))
 				&& (FBP.spawnRedstoneBlockParticles || block != Blocks.REDSTONE_BLOCK)
-				&& !FBP.INSTANCE.isInExceptions(block, true) && block != FBP.FBPBlock)
+				&& !FBP.INSTANCE.isBlacklisted(block, true) && block != FBP.FBPBlock)
 		{
 			if (!FBP.enabled || ParticleManagerMod.addBlockDestroyEffects(pos, state, world, this, FBP.particlesPerAxis))
 				super.addBlockDestroyEffects(pos, state);
@@ -87,7 +87,7 @@ public class FBPParticleManagerMod extends FBPParticleManager implements IPropor
 		protected FBPParticleDiggingMod(World world, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed,
 				IBlockState state)
 		{
-			super(world, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, 1, 1, 1, state, null, (float) FBP.random.nextDouble(0.75, 1),
+			super(world, xCoord, yCoord, zCoord, xSpeed, ySpeed, zSpeed, (float) FBP.random.nextDouble(0.75, 1), 1, 1, 1, state, null,
 					Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state));
 		}
 
