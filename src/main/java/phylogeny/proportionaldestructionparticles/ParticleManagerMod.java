@@ -38,6 +38,7 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 			return true;
 		}
 
+		state = state.getActualState(world, pos);
 		IBlockState stateParticle = null;
 		if (ChiselsAndBitsAPIProxy.isBlockChiseled(world, pos))
 		{
@@ -52,7 +53,6 @@ public class ParticleManagerMod extends ParticleManager implements IProportional
 			}
 			stateParticle = state;
 		}
-		state = state.getActualState(world, pos);
 
 		// Attempt to spawn particles if block is not air and if not canceled by the block
 		if (!state.getBlock().isAir(state, world, pos))
