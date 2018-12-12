@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 	 acceptedMinecraftVersions = ProportionalDestructionParticles.MC_VERSIONS_ACCEPTED,
 	 updateJSON = ProportionalDestructionParticles.UPDATE_JSON,
 	 dependencies = ProportionalDestructionParticles.DEPENDENCIES,
-	 clientSideOnly = ProportionalDestructionParticles.CLIENT_OLNY)
+	 clientSideOnly = ProportionalDestructionParticles.CLIENT_ONLY)
 public class ProportionalDestructionParticles
 {
 
@@ -25,7 +25,7 @@ public class ProportionalDestructionParticles
 	public static final String UPDATE_JSON = "@UPDATE@";
 	public static final String MC_VERSIONS_ACCEPTED = "[1.12.2,)";
 	public static final String DEPENDENCIES = "before:cofhcore;after:fbp@[2.4.1,);after:chiselsandbits";
-	public static final boolean CLIENT_OLNY = true;
+	public static final boolean CLIENT_ONLY = true;
 	private static final String INFO_LANG_KEY = "logger." + MOD_ID + ".info.replacement";
 	private static Logger logger;
 
